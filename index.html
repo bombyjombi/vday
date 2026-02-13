@@ -2,106 +2,46 @@
 <html lang="hu">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Will you be my Valentine?</title>
+<title>Valentin ❤️</title>
 
 <style>
 body {
-    margin: 0;
+    background: #111;
+    color: white;
+    text-align: center;
+    font-family: Arial;
     height: 100vh;
-    background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-    font-family: Arial, sans-serif;
     overflow: hidden;
 }
 
-.container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    background: rgba(255,255,255,0.2);
-    padding: 40px;
-    border-radius: 20px;
-}
-
-h1 {
-    color: white;
-}
-
-button {
+#yesBtn, #noBtn {
     padding: 15px 25px;
-    font-size: 1.2rem;
+    font-size: 18px;
     border: none;
-    border-radius: 12px;
     cursor: pointer;
-    margin: 10px;
+    position: absolute;
+    transition: 0.4s;
 }
 
 #yesBtn {
-    background-color: #ff4d6d;
+    background: #ff4d6d;
     color: white;
-    position: relative;
-    transition: all 0.5s ease;
+    left: 50%;
+    top: 60%;
+    transform: translate(-50%, -50%);
 }
 
 #noBtn {
-    background-color: #444;
+    background: #444;
     color: white;
+    left: 50%;
+    top: 75%;
+    transform: translate(-50%, -50%);
 }
 
-#noBtn.disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-}
-
-/* Final message */
-#finalMessage {
-    position: fixed;
-    top: 15%;
-    width: 100%;
-    text-align: center;
-    font-size: 4rem;
-    font-weight: bold;
-    color: white;
-    display: none;
-    z-index: 5;
-}
-
-/* ERROR SCREEN */
-#errorScreen {
-    position: fixed;
-    inset: 0;
-    background: black;
-    color: red;
-    display: none;
-    justify-content: center;
-    align-items: center;
-    font-size: 6rem;
-    font-weight: bold;
-    z-index: 9999;
-    animation: glitchBg 0.2s infinite;
-}
-
+/* Glitch effekt */
 .glitch {
-    position: relative;
-}
-
-.glitch::before,
-.glitch::after {
-    content: "ERROR >:";
-    position: absolute;
-    left: 0;
-}
-
-.glitch::before {
-    color: cyan;
     animation: glitch 0.3s infinite;
-}
-
-.glitch::after {
-    color: magenta;
-    animation: glitch 0.2s infinite reverse;
 }
 
 @keyframes glitch {
@@ -109,156 +49,90 @@ button {
     25% { transform: translate(-2px, 2px); }
     50% { transform: translate(2px, 2px); }
     75% { transform: translate(-2px, -2px); }
-    100% { transform: translate(2px, -2px); }
+    100% { transform: translate(0,0); }
 }
 
-@keyframes glitchBg {
-    0% { background-color: black; }
-    50% { background-color: #110000; }
-    100% { background-color: black; }
-}
-
-/* Hearts */
+/* Szívecskék */
 .heart {
-    position: fixed;
+    position: absolute;
     color: pink;
-    animation: floatUp 3s linear forwards;
+    animation: floatUp 3s linear infinite;
 }
 
 @keyframes floatUp {
-    to {
-        transform: translateY(-100vh);
-        opacity: 0;
-    }
-}
-
-/* Fireworks */
-canvas {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
+    from { transform: translateY(0); opacity: 1; }
+    to { transform: translateY(-200px); opacity: 0; }
 }
 </style>
 </head>
 
 <body>
 
-<div id="finalMessage">Mertél volna mást nyomni! Boldog Valentin-napot! 💕</div>
+<h1 id="title">Leszel a Valentinom? ❤️</h1>
 
-<div class="container">
-    <h1 id="question">Will you be my Valentine? ❤️</h1>
-    <button id="yesBtn">Igen Hercegem 💖</button>
-    <button id="noBtn">A tiéd fix nem 💔</button>
-</div>
-
-<div id="errorScreen">
-    <div class="glitch">ERROR >:</div>
-</div>
-
-<canvas id="fireworks"></canvas>
+<button id="yesBtn">Igen, hercegem</button>
+<button id="noBtn">Nem</button>
 
 <script>
 const yesBtn = document.getElementById("yesBtn");
 const noBtn = document.getElementById("noBtn");
-const question = document.getElementById("question");
-const errorScreen = document.getElementById("errorScreen");
-const finalMessage = document.getElementById("finalMessage");
+const title = document.getElementById("title");
 
 let clickCount = 0;
 
-/* Positions */
-const positions = [
-    { bottom: "10px", left: "10px" },      // bal alsó
-    { top: "10px", right: "10px" },        // jobb felső
-    { top: "10px", left: "10px" },         // bal felső
-    { bottom: "10px", left: "50%", transform: "translateX(-50%)" } // alul közép
-];
-
-/* Text changes */
 const texts = [
-    "biztos?",
+    "Igen, hercegem",
+    "Biztos?",
     "100%?",
-    "komolyan?",
-    "akkor igen?"
+    "Komolyan?",
+    "Akkor igen?"
 ];
 
-yesBtn.addEventListener("click", () => {
+const positions = [
+    { left: "10%", top: "85%" },  // bal alsó
+    { left: "90%", top: "10%" },  // jobb felső
+    { left: "10%", top: "10%" },  // bal felső
+    { left: "50%", top: "90%" }   // alul középen
+];
+
+yesBtn.onclick = () => {
     if (clickCount < positions.length) {
-        Object.assign(yesBtn.style, { position: "fixed" }, positions[clickCount]);
-        question.innerText = texts[clickCount];
-    } else if (clickCount === positions.length) {
-        startCelebration();
+        // Szöveg váltás
+        yesBtn.textContent = texts[clickCount + 1];
+
+        // Pozíció váltás
+        yesBtn.style.left = positions[clickCount].left;
+        yesBtn.style.top = positions[clickCount].top;
+        yesBtn.style.transform = "translate(-50%, -50%)";
+
+        clickCount++;
+    } else {
+        // 🎆 Végső romantikus effekt
+        title.textContent = "Yeyy! Boldog Valentin napot ❤️";
+        yesBtn.style.display = "none";
+        noBtn.disabled = true;
+        noBtn.style.opacity = "0.4";
+
+        startHearts();
     }
-    clickCount++;
-});
+};
 
-/* NO → glitch */
-noBtn.addEventListener("click", () => {
-    errorScreen.style.display = "flex";
-});
+noBtn.onclick = () => {
+    noBtn.classList.add("glitch");
+};
 
-/* Celebration */
-function startCelebration() {
-    finalMessage.style.display = "block";
-    noBtn.disabled = true;
-    noBtn.classList.add("disabled");
-    startFireworks();
-    startHearts();
-}
-
-/* Hearts */
 function startHearts() {
     setInterval(() => {
         const heart = document.createElement("div");
-        heart.className = "heart";
-        heart.innerText = "💖";
-        heart.style.left = Math.random() * 100 + "vw";
-        heart.style.bottom = "0px";
-        heart.style.fontSize = (Math.random() * 20 + 20) + "px";
+        heart.classList.add("heart");
+        heart.textContent = "❤️";
+        heart.style.left = Math.random() * 100 + "%";
+        heart.style.top = "100%";
         document.body.appendChild(heart);
+
         setTimeout(() => heart.remove(), 3000);
     }, 300);
 }
-
-/* Fireworks */
-const canvas = document.getElementById("fireworks");
-const ctx = canvas.getContext("2d");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-let particles = [];
-
-function startFireworks() {
-    setInterval(() => {
-        for (let i = 0; i < 40; i++) {
-            particles.push({
-                x: canvas.width / 2,
-                y: canvas.height / 2,
-                radius: Math.random() * 4 + 1,
-                color: `hsl(${Math.random()*360},100%,50%)`,
-                speedX: (Math.random() - 0.5) * 8,
-                speedY: (Math.random() - 0.5) * 8,
-                life: 100
-            });
-        }
-    }, 600);
-}
-
-function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    particles.forEach((p, index) => {
-        p.x += p.speedX;
-        p.y += p.speedY;
-        p.life--;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = p.color;
-        ctx.fill();
-        if (p.life <= 0) particles.splice(index, 1);
-    });
-    requestAnimationFrame(animate);
-}
-animate();
 </script>
 
 </body>
