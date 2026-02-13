@@ -2,136 +2,188 @@
 <html lang="hu">
 <head>
 <meta charset="UTF-8">
-<title>Valentin ❤️</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valentin 💖</title>
 
 <style>
 body {
-    background: #111;
-    color: white;
-    text-align: center;
-    font-family: Arial;
+    margin: 0;
     height: 100vh;
-    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #e79a9a;
+    font-family: Arial, sans-serif;
 }
 
-#yesBtn, #noBtn {
-    padding: 15px 25px;
-    font-size: 18px;
+/* Doboz */
+.container {
+    background: rgba(255,255,255,0.35);
+    padding: 40px;
+    border-radius: 25px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+}
+
+/* Cím */
+h1 {
+    color: white;
+    font-size: 2.2rem;
+    margin-bottom: 25px;
+}
+
+/* Gombok */
+.buttons {
+    position: relative;
+    height: 120px;
+}
+
+button {
+    padding: 14px 24px;
+    font-size: 1rem;
     border: none;
+    border-radius: 12px;
     cursor: pointer;
-    position: absolute;
-    transition: 0.4s;
+    transition: 0.3s;
 }
 
 #yesBtn {
     background: #ff4d6d;
     color: white;
-    left: 50%;
-    top: 60%;
-    transform: translate(-50%, -50%);
+    position: absolute;
+    left: 0;
 }
 
 #noBtn {
     background: #444;
     color: white;
-    left: 50%;
-    top: 75%;
-    transform: translate(-50%, -50%);
+    margin-left: 160px;
 }
 
-/* Glitch effekt */
-.glitch {
-    animation: glitch 0.3s infinite;
+/* Valentin üzenet */
+#valentineMessage {
+    display: none;
+    font-size: 2.5rem;
+    color: white;
+    margin-top: 20px;
+    animation: pop 1s ease;
 }
 
-@keyframes glitch {
-    0% { transform: translate(2px, -2px); }
-    25% { transform: translate(-2px, 2px); }
-    50% { transform: translate(2px, 2px); }
-    75% { transform: translate(-2px, -2px); }
-    100% { transform: translate(0,0); }
+@keyframes pop {
+    from { transform: scale(0); }
+    to { transform: scale(1); }
 }
 
 /* Szívecskék */
 .heart {
-    position: absolute;
-    color: pink;
-    animation: floatUp 3s linear infinite;
+    position: fixed;
+    color: red;
+    font-size: 24px;
+    animation: floatUp 3s linear forwards;
 }
 
 @keyframes floatUp {
     from { transform: translateY(0); opacity: 1; }
-    to { transform: translateY(-200px); opacity: 0; }
+    to { transform: translateY(-300px); opacity: 0; }
+}
+
+/* Glitch error */
+#errorScreen {
+    position: fixed;
+    inset: 0;
+    background: black;
+    color: red;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    font-size: 5rem;
+    font-weight: bold;
+    animation: glitch 0.2s infinite;
+    z-index: 9999;
+}
+
+@keyframes glitch {
+    0% { transform: translate(2px,2px); }
+    25% { transform: translate(-2px,-2px); }
+    50% { transform: translate(2px,-2px); }
+    75% { transform: translate(-2px,2px); }
+    100% { transform: translate(0,0); }
 }
 </style>
 </head>
 
 <body>
 
-<h1 id="title">Leszel a Valentinom? ❤️</h1>
+<div class="container">
+    <h1>Will you be my Valentine? ❤️</h1>
 
-<button id="yesBtn">Igen, hercegem</button>
-<button id="noBtn">Nem</button>
+    <div class="buttons">
+        <button id="yesBtn">Igen, hercegem 💖</button>
+        <button id="noBtn">A tiéd fix nem 💔</button>
+    </div>
+
+    <div id="valentineMessage">Mertél volna mást nyomni💕Boldog Valentin-napot!💘</div>
+</div>
+
+<div id="errorScreen">error >:</div>
 
 <script>
 const yesBtn = document.getElementById("yesBtn");
 const noBtn = document.getElementById("noBtn");
-const title = document.getElementById("title");
+const message = document.getElementById("valentineMessage");
+const errorScreen = document.getElementById("errorScreen");
 
 let clickCount = 0;
 
-const texts = [
-    "Igen, hercegem",
-    "Biztos?",
-    "100%?",
-    "Komolyan?",
-    "Akkor igen?"
-];
-
 const positions = [
-    { left: "10%", top: "85%" },  // bal alsó
-    { left: "90%", top: "10%" },  // jobb felső
-    { left: "10%", top: "10%" },  // bal felső
-    { left: "50%", top: "90%" }   // alul középen
+    { bottom: "0", left: "0" },      // bal alsó
+    { top: "0", right: "0" },        // jobb felső
+    { top: "0", left: "0" },         // bal felső
+    { bottom: "0", left: "50%", transform: "translateX(-50%)" } // alul közép
 ];
 
-yesBtn.onclick = () => {
-    if (clickCount < positions.length) {
-        // Szöveg váltás
-        yesBtn.textContent = texts[clickCount + 1];
+const texts = [
+    "Biztos? 😏",
+    "100%? 😳",
+    "Komolyan? 🤨",
+    "Akkor igen? 💍"
+];
 
-        // Pozíció váltás
-        yesBtn.style.left = positions[clickCount].left;
-        yesBtn.style.top = positions[clickCount].top;
-        yesBtn.style.transform = "translate(-50%, -50%)";
+yesBtn.addEventListener("click", () => {
+    if (clickCount < positions.length) {
+        yesBtn.style.top = "";
+        yesBtn.style.left = "";
+        yesBtn.style.right = "";
+        yesBtn.style.bottom = "";
+        yesBtn.style.transform = "";
+
+        Object.assign(yesBtn.style, positions[clickCount]);
+        yesBtn.innerText = texts[clickCount];
 
         clickCount++;
     } else {
-        // 🎆 Végső romantikus effekt
-        title.textContent = "Yeyy! Boldog Valentin napot ❤️";
-        yesBtn.style.display = "none";
+        // VÉG: tűzijáték + szívek + üzenet
+        message.style.display = "block";
         noBtn.disabled = true;
-        noBtn.style.opacity = "0.4";
+        noBtn.style.opacity = "0.5";
 
-        startHearts();
+        setInterval(createHeart, 300);
     }
-};
+});
 
-noBtn.onclick = () => {
-    noBtn.classList.add("glitch");
-};
+noBtn.addEventListener("click", () => {
+    errorScreen.style.display = "flex";
+});
 
-function startHearts() {
-    setInterval(() => {
-        const heart = document.createElement("div");
-        heart.classList.add("heart");
-        heart.textContent = "❤️";
-        heart.style.left = Math.random() * 100 + "%";
-        heart.style.top = "100%";
-        document.body.appendChild(heart);
+function createHeart() {
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.innerText = "❤️";
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.top = "100vh";
+    document.body.appendChild(heart);
 
-        setTimeout(() => heart.remove(), 3000);
-    }, 300);
+    setTimeout(() => heart.remove(), 3000);
 }
 </script>
 
